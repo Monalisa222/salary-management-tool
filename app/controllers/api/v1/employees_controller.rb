@@ -1,4 +1,9 @@
 class Api::V1::EmployeesController < ApplicationController
+  def index
+    employees = Employee.order(created_at: :desc).page(params[:page]).per(params[:per_page])
+    render json: { data: employees, meta: pagination_dict(employees) }
+  end
+
   def create
     employee = Employee.new(employee_params)
     if employee.save
@@ -12,6 +17,16 @@ class Api::V1::EmployeesController < ApplicationController
 
   def employee_params
     params.require(:employee).permit(:full_name, :job_title, :country, :salary, :email, :department, :joining_date, :active)
+  end
+
+  def pagination_dict(object)
+    {
+      current_page: object.current_page,
+      next_page: object.next_page,
+      prev_page: object.prev_page,
+      total_pages: object.total_pages,
+      total_count: object.total_count
+    }
   end
 
 end
