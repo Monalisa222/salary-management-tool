@@ -25,10 +25,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_070423) do
     t.date "joining_date"
     t.decimal "salary", precision: 12, scale: 2, null: false
     t.datetime "updated_at", null: false
-    t.index ["country", "job_title"], name: "index_employees_on_country_and_job_title"
-    t.index ["country"], name: "index_employees_on_country"
-    t.index ["email"], name: "index_employees_on_email", unique: true
-    t.index ["job_title"], name: "index_employees_on_job_title"
-    t.index ["salary"], name: "index_employees_on_salary"
+    t.index [ "country", "job_title" ], name: "index_employees_on_country_and_job_title"
+    t.index [ "country" ], name: "index_employees_on_country"
+    t.index [ "email" ], name: "index_employees_on_email", unique: true
+    t.index [ "job_title" ], name: "index_employees_on_job_title"
+    t.index [ "salary" ], name: "index_employees_on_salary"
   end
 end

@@ -12,14 +12,14 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :employees
 
-      get 'salary_insights/country',
-        to: 'salary_insights#country'
+      get "salary_insights/country",
+        to: "salary_insights#country"
 
-      get 'salary_insights/job_title',
-        to: 'salary_insights#job_title'
+      get "salary_insights/job_title",
+        to: "salary_insights#job_title"
 
-      get 'salary_insights/distribution',
-        to: 'salary_insights#distribution'
+      get "salary_insights/distribution",
+        to: "salary_insights#distribution"
     end
   end
 end

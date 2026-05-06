@@ -17,6 +17,6 @@ class CreateEmployees < ActiveRecord::Migration[8.1]
     add_index :employees, :job_title
     add_index :employees, :salary
     add_index :employees, :email, unique: true
-    add_index :employees, [:country, :job_title]
+    add_index :employees, [ :country, :job_title ]
   end
 end

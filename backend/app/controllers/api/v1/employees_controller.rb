@@ -1,5 +1,5 @@
 class Api::V1::EmployeesController < ApplicationController
-  before_action :set_employee, only: [:show, :update, :destroy]
+  before_action :set_employee, only: [ :show, :update, :destroy ]
 
   def index
     employees = EmployeeSearchQuery.new(scope: Employee.order(created_at: :desc), params: params).call.page(page).per(per_page)
@@ -51,7 +51,7 @@ class Api::V1::EmployeesController < ApplicationController
   def per_page
     value = params.fetch(:per_page, 10).to_i
     value = 10 unless value.positive?
-    [value, 100].min
+    [ value, 100 ].min
   end
 
   def pagination_dict(object)
@@ -63,5 +63,4 @@ class Api::V1::EmployeesController < ApplicationController
       total_count: object.total_count
     }
   end
-
 end

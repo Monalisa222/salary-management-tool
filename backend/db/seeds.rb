@@ -8,7 +8,7 @@ last_names = File.readlines(
   chomp: true
 )
 
-countries = ["India", "USA", "Canada", "Germany", "UK"]
+countries = [ "India", "USA", "Canada", "Germany", "UK" ]
 
 job_titles = [
   "Software Engineer",

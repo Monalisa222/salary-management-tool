@@ -35,7 +35,7 @@ RSpec.describe "Api::V1::Employees", type: :request do
           country: "",
           salary: -1000,
           email: "invalid-email"
-        } 
+        }
       }
 
       post "/api/v1/employees", params: invalid_params
@@ -58,7 +58,6 @@ RSpec.describe "Api::V1::Employees", type: :request do
       end
 
       it "returns paginated list of employees" do
-
         get "/api/v1/employees", params: { page: 1, per_page: 10 }
 
         expect(response).to have_http_status(:ok)
