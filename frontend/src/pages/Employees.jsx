@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Mail, BriefcaseBusiness, MapPin, Loader2 } from 'lucide-react'
 import { fetchEmployees } from '../api/employees'
+import EmployeeFormModal from '../components/EmployeeFormModal'
 
 function Employees() {
   const [employees, setEmployees] = useState([])
@@ -8,6 +9,8 @@ function Employees() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     async function loadEmployees() {
@@ -27,7 +30,7 @@ function Employees() {
     }
 
     loadEmployees()
-  }, [page])
+  }, [page, refreshKey])
 
   return (
     <div className="space-y-6">
@@ -41,7 +44,10 @@ function Employees() {
           </p>
         </div>
 
-        <button className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
+        >
           Add Employee
         </button>
       </div>
@@ -140,6 +146,12 @@ function Employees() {
           </>
         )}
       </div>
+
+      <EmployeeFormModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onCreated={() => setRefreshKey((current) => current + 1)}
+        />
     </div>
   )
 }
