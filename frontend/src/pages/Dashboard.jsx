@@ -13,13 +13,26 @@ function formatCurrency(value) {
 }
 
 function Dashboard() {
-  const [country, setCountry] = useState('India')
-  const [jobTitle, setJobTitle] = useState('Software Engineer')
+  const [country, setCountry] = useState('')
+  const [jobTitle, setJobTitle] = useState('')
   const [countryInsights, setCountryInsights] = useState(null)
   const [jobTitleInsights, setJobTitleInsights] = useState(null)
   const [distribution, setDistribution] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const shouldFetchJobTitleInsights = country && jobTitle
+  const countries = ['', 'India', 'USA', 'Canada', 'Germany', 'UK']
+
+  const jobTitles = [
+    '',
+    'Software Engineer',
+    'Senior Software Engineer',
+    'HR Manager',
+    'Product Manager',
+    'QA Engineer',
+    'DevOps Engineer',
+  ]
+
 
   useEffect(() => {
     async function loadInsights() {
@@ -27,16 +40,28 @@ function Dashboard() {
         setLoading(true)
         setError('')
 
-        const [countryResult, jobTitleResult, distributionResult] =
-          await Promise.all([
-            fetchCountrySalaryInsights(country),
-            fetchJobTitleSalaryInsights(country, jobTitle),
-            fetchSalaryDistribution(country),
-          ])
+        const countryResult =
+          await fetchCountrySalaryInsights(country)
+
+        const distributionResult =
+          await fetchSalaryDistribution(country)
 
         setCountryInsights(countryResult.data)
-        setJobTitleInsights(jobTitleResult.data)
         setDistribution(distributionResult.data)
+
+        if (!country && jobTitle) {
+          setJobTitleInsights(null)
+          return
+        }
+
+        if (country && jobTitle) {
+          const jobTitleResult =
+            await fetchJobTitleSalaryInsights(country, jobTitle)
+
+          setJobTitleInsights(jobTitleResult.data)
+        } else {
+          setJobTitleInsights(null)
+        }
       } catch {
         setError('Unable to load salary insights. Please check backend server.')
       } finally {
@@ -46,7 +71,6 @@ function Dashboard() {
 
     loadInsights()
   }, [country, jobTitle])
-
   const cards = [
     {
       title: 'Minimum Salary',
@@ -95,24 +119,34 @@ function Dashboard() {
           <label className="text-sm font-semibold text-slate-700">
             Country
           </label>
-          <input
+          <select
             value={country}
             onChange={(event) => setCountry(event.target.value)}
             className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-slate-900"
-            placeholder="India"
-          />
+          >
+            {countries.map((item) => (
+              <option key={item || 'all'} value={item}>
+                {item || 'All Countries'}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
           <label className="text-sm font-semibold text-slate-700">
             Job Title
           </label>
-          <input
+          <select
             value={jobTitle}
             onChange={(event) => setJobTitle(event.target.value)}
             className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-slate-900"
-            placeholder="Software Engineer"
-          />
+          >
+            {jobTitles.map((item) => (
+              <option key={item || 'all'} value={item}>
+                {item || 'All Job Titles'}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex items-end">
@@ -181,13 +215,21 @@ function Dashboard() {
                   Average Salary
                 </p>
 
-                <h3 className="mt-2 text-4xl font-bold text-slate-950">
-                  {formatCurrency(jobTitleInsights?.average_salary)}
-                </h3>
+                {jobTitleInsights ? (
+  <>
+                    <h3 className="mt-2 text-4xl font-bold text-slate-950">
+                      {formatCurrency(jobTitleInsights.average_salary)}
+                    </h3>
 
-                <p className="mt-2 text-sm text-slate-500">
-                  Based on {jobTitleInsights?.employee_count || 0} employee records
-                </p>
+                    <p className="mt-2 text-sm text-slate-500">
+                      Based on {jobTitleInsights.employee_count} employee records
+                    </p>
+                  </>
+                ) : (
+                  <div className="mt-4 rounded-2xl bg-slate-100 p-4 text-sm text-slate-600">
+                    Please select both country and job title to view average salary insights.
+                  </div>
+                )}
               </div>
             </div>
 
