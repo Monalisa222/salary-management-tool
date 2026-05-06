@@ -50,4 +50,24 @@ RSpec.describe "Api::V1::Employees", type: :request do
       expect(body["errors"]).to include("Email is invalid")
     end
   end
+
+  describe "GET /api/v1/employees" do
+    it "returns paginated list of employees" do
+      create_list(:employee, 30)
+
+      get "/api/v1/employees", params: { page: 1, per_page: 10 }
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+
+      expect(body["data"].length).to eq(10)
+      expect(body["meta"]["current_page"]).to eq(1)
+      expect(body["meta"]["next_page"]).to eq(2)
+      expect(body["meta"]["prev_page"]).to eq(nil)
+      expect(body["meta"]["total_pages"]).to eq(3)
+      expect(body["meta"]["total_count"]).to eq(30)
+    end
+  end
 end
+
+
