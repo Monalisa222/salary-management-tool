@@ -1,9 +1,6 @@
 class Api::V1::EmployeesController < ApplicationController
   def index
-    employees = Employee.order(created_at: :desc).page(page).per(per_page)
-
-    employees = employees.where(country: params[:country]) if params[:country].present?
-    employees = employees.where(job_title: params[:job_title]) if params[:job_title].present?
+    employees = EmployeeSearchQuery.new(scope: Employee.order(created_at: :desc), params: params).call.page(page).per(per_page)
 
     render json: { data: employees, meta: pagination_dict(employees) }
   end
