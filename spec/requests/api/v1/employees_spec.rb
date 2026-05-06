@@ -52,8 +52,11 @@ RSpec.describe "Api::V1::Employees", type: :request do
   end
 
   describe "GET /api/v1/employees" do
+    before do
+      create_list(:employee, 15)
+    end
+
     it "returns paginated list of employees" do
-      create_list(:employee, 30)
 
       get "/api/v1/employees", params: { page: 1, per_page: 10 }
 
@@ -64,8 +67,22 @@ RSpec.describe "Api::V1::Employees", type: :request do
       expect(body["meta"]["current_page"]).to eq(1)
       expect(body["meta"]["next_page"]).to eq(2)
       expect(body["meta"]["prev_page"]).to eq(nil)
-      expect(body["meta"]["total_pages"]).to eq(3)
-      expect(body["meta"]["total_count"]).to eq(30)
+      expect(body["meta"]["total_pages"]).to eq(2)
+      expect(body["meta"]["total_count"]).to eq(15)
+    end
+
+    it "returns data when no params are provided" do
+      get "/api/v1/employees"
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+
+      expect(body["data"].length).to eq(10)
+      expect(body["meta"]["current_page"]).to eq(1)
+      expect(body["meta"]["next_page"]).to eq(2)
+      expect(body["meta"]["prev_page"]).to eq(nil)
+      expect(body["meta"]["total_pages"]).to eq(2)
+      expect(body["meta"]["total_count"]).to eq(15)
     end
   end
 end
