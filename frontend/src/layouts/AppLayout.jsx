@@ -1,4 +1,5 @@
 import { BarChart3, Users, WalletCards } from 'lucide-react'
+import { NavLink } from 'react-router-dom'
 
 function AppLayout({ children }) {
   return (
@@ -19,15 +20,33 @@ function AppLayout({ children }) {
         </div>
 
         <nav className="space-y-2">
-          <a className="flex items-center gap-3 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-sm">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium ${
+                isActive
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`
+            }
+          >
             <BarChart3 size={18} />
             Dashboard
-          </a>
+          </NavLink>
 
-          <a className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-100">
+          <NavLink
+            to="/employees"
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium ${
+                isActive
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`
+            }
+          >
             <Users size={18} />
             Employees
-          </a>
+          </NavLink>
         </nav>
       </aside>
 
