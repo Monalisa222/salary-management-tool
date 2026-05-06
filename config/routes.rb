@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
       get 'salary_insights/country',
         to: 'salary_insights#country'
+
+      get 'salary_insights/job_title',
+        to: 'salary_insights#job_title'
     end
   end
 end
