@@ -26,3 +26,7 @@ export async function updateEmployee(id, employee) {
 
   return response.data
 }
+
+export async function deleteEmployee(id) {
+  await apiClient.delete(`/employees/${id}`)
+}
