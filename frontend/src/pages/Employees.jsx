@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Mail, BriefcaseBusiness, MapPin, Loader2 } from 'lucide-react'
-import { fetchEmployees } from '../api/employees'
 import EmployeeFormModal from '../components/EmployeeFormModal'
-import { Pencil } from 'lucide-react'
+import { Mail, BriefcaseBusiness, MapPin, Loader2, Pencil, Trash2 } from 'lucide-react'
+import { fetchEmployees, deleteEmployee } from '../api/employees'
 
 function Employees() {
   const [employees, setEmployees] = useState([])
@@ -13,6 +12,7 @@ function Employees() {
   const [modalOpen, setModalOpen] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
   const [selectedEmployee, setSelectedEmployee] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   useEffect(() => {
     async function loadEmployees() {
@@ -33,6 +33,26 @@ function Employees() {
 
     loadEmployees()
   }, [page, refreshKey])
+
+  const handleDelete = async (employee) => {
+    const confirmed = window.confirm(
+      `Delete ${employee.full_name}? This action cannot be undone.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      setDeletingId(employee.id)
+
+      await deleteEmployee(employee.id)
+
+      setRefreshKey((current) => current + 1)
+    } catch {
+      setError('Unable to delete employee. Please try again.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -122,16 +142,27 @@ function Employees() {
                       </td>
 
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => {
-                            setSelectedEmployee(employee)
-                            setModalOpen(true)
-                          }}
-                          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-                        >
-                          <Pencil size={14} />
-                          Edit
-                        </button>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              setSelectedEmployee(employee)
+                              setModalOpen(true)
+                            }}
+                            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                          >
+                            <Pencil size={14} />
+                            Edit
+                          </button>
+
+                          <button
+                            disabled={deletingId === employee.id}
+                            onClick={() => handleDelete(employee)}
+                            className="inline-flex items-center gap-2 rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
+                          >
+                            <Trash2 size={14} />
+                            {deletingId === employee.id ? 'Deleting...' : 'Delete'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
