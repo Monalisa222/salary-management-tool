@@ -36,4 +36,12 @@ RSpec.describe Employee, type: :model do
       expect(employee.email).to eq("john.doe@example.com")
     end
   end
+
+  describe "database indexes" do
+    it { should have_db_index(:country) }
+    it { should have_db_index(:job_title) }
+    it { should have_db_index(:salary) }
+    it { should have_db_index(:email).unique(true) }
+    it { should have_db_index([:country, :job_title]) }
+  end
 end
