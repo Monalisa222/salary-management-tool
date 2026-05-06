@@ -52,39 +52,55 @@ RSpec.describe "Api::V1::Employees", type: :request do
   end
 
   describe "GET /api/v1/employees" do
-    before do
-      create_list(:employee, 15)
+    context "with pagination" do
+      before do
+        create_list(:employee, 15)
+      end
+
+      it "returns paginated list of employees" do
+
+        get "/api/v1/employees", params: { page: 1, per_page: 10 }
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+
+        expect(body["data"].length).to eq(10)
+        expect(body["meta"]["current_page"]).to eq(1)
+        expect(body["meta"]["next_page"]).to eq(2)
+        expect(body["meta"]["prev_page"]).to eq(nil)
+        expect(body["meta"]["total_pages"]).to eq(2)
+        expect(body["meta"]["total_count"]).to eq(15)
+      end
+
+      it "returns data when no params are provided" do
+        get "/api/v1/employees"
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+
+        expect(body["data"].length).to eq(10)
+        expect(body["meta"]["current_page"]).to eq(1)
+        expect(body["meta"]["next_page"]).to eq(2)
+        expect(body["meta"]["prev_page"]).to eq(nil)
+        expect(body["meta"]["total_pages"]).to eq(2)
+        expect(body["meta"]["total_count"]).to eq(15)
+      end
     end
 
-    it "returns paginated list of employees" do
+    context "with filtering" do
+      it "filter employees by country and job_title" do
+        create_list(:employee, 5, country: "USA", job_title: "Software Engineer")
+        create_list(:employee, 5, country: "Canada", job_title: "Product Manager")
 
-      get "/api/v1/employees", params: { page: 1, per_page: 10 }
+        get "/api/v1/employees", params: { country: "USA", job_title: "Software Engineer" }
 
-      expect(response).to have_http_status(:ok)
-      body = JSON.parse(response.body)
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
 
-      expect(body["data"].length).to eq(10)
-      expect(body["meta"]["current_page"]).to eq(1)
-      expect(body["meta"]["next_page"]).to eq(2)
-      expect(body["meta"]["prev_page"]).to eq(nil)
-      expect(body["meta"]["total_pages"]).to eq(2)
-      expect(body["meta"]["total_count"]).to eq(15)
-    end
-
-    it "returns data when no params are provided" do
-      get "/api/v1/employees"
-
-      expect(response).to have_http_status(:ok)
-      body = JSON.parse(response.body)
-
-      expect(body["data"].length).to eq(10)
-      expect(body["meta"]["current_page"]).to eq(1)
-      expect(body["meta"]["next_page"]).to eq(2)
-      expect(body["meta"]["prev_page"]).to eq(nil)
-      expect(body["meta"]["total_pages"]).to eq(2)
-      expect(body["meta"]["total_count"]).to eq(15)
+        expect(body["data"].length).to eq(5)
+        expect(body["data"].first["country"]).to eq("USA")
+        expect(body["data"].first["job_title"]).to eq("Software Engineer")
+      end
     end
   end
 end
-
-
