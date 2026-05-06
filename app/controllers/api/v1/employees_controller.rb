@@ -14,6 +14,11 @@ class Api::V1::EmployeesController < ApplicationController
     end
   end
 
+  def show
+    employee = Employee.find(params[:id])
+    render json: { data: employee }
+  end
+
   private
 
   def employee_params
