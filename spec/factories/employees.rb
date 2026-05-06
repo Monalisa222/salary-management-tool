@@ -1,12 +1,12 @@
 FactoryBot.define do
   factory :employee do
-    full_name { "MyString" }
-    job_title { "MyString" }
-    country { "MyString" }
-    salary { "9.99" }
-    email { "MyString" }
-    department { "MyString" }
-    joining_date { "2026-05-06" }
-    active { false }
+    full_name { Faker::Name.name }
+    job_title { Faker::Job.title }
+    country { Faker::Address.country }
+    salary { Faker::Number.decimal(l_digits: 5, r_digits: 2) }
+    email { Faker::Internet.unique.email }
+    department { Faker::Commerce.department }
+    joining_date { Faker::Date.backward(days: 365) }
+    active { true }
   end
 end
