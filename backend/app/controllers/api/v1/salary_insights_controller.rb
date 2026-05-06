@@ -1,13 +1,7 @@
 class Api::V1::SalaryInsightsController < ApplicationController
   def country
-    employees = Employee.where(country: normalize_country)
-
-    if employees.exists?
-      stats = SalaryInsights::CountryStatsService.new(normalize_country).call
-      render json: { data: stats }
-    else
-      render json: { error: "No employees found for country #{normalize_country}" }, status: :not_found
-    end
+    stats = SalaryInsights::CountryStatsService.new(normalize_country).call
+    render json: { data: stats }
   end
 
   def job_title
@@ -28,14 +22,8 @@ class Api::V1::SalaryInsightsController < ApplicationController
   end
 
   def distribution
-    employees = Employee.where(country: normalize_country)
-
-    if employees.exists?
-      distribution = SalaryInsights::DistributionService.new(country: normalize_country).call
-      render json: { data: distribution }
-    else
-      render json: { error: "No employees found for country #{normalize_country}" }, status: :not_found
-    end
+    distribution = SalaryInsights::DistributionService.new(country: normalize_country).call
+    render json: { data: distribution }
   end
 
   def normalize_country
