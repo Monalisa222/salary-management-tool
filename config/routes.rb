@@ -17,6 +17,9 @@ Rails.application.routes.draw do
 
       get 'salary_insights/job_title',
         to: 'salary_insights#job_title'
+
+      get 'salary_insights/distribution',
+        to: 'salary_insights#distribution'
     end
   end
 end
