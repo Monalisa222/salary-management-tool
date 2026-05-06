@@ -103,4 +103,28 @@ RSpec.describe "Api::V1::Employees", type: :request do
       end
     end
   end
+
+  describe "GET /api/v1/employees/:id" do
+    let(:employee) { create(:employee) }
+
+    it "returns the employee" do
+      get "/api/v1/employees/#{employee.id}"
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+
+      expect(body["data"]["id"]).to eq(employee.id)
+      expect(body["data"]["full_name"]).to eq(employee.full_name)
+      expect(body["data"]["job_title"]).to eq(employee.job_title)
+      expect(body["data"]["country"]).to eq(employee.country)
+      expect(body["data"]["salary"]).to eq(employee.salary.to_s)
+      expect(body["data"]["email"]).to eq(employee.email)
+    end
+
+    it "returns not found for non-existent employee" do
+      get "/api/v1/employees/999999"
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end
