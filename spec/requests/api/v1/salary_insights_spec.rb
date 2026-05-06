@@ -19,7 +19,7 @@ RSpec.describe 'Api::V1::SalaryInsights', type: :request do
 
       body = JSON.parse(response.body)
 
-      expect(body['data']['country']).to eq('India')
+      expect(body['data']['country']).to eq('INDIA')
       expect(body['data']['minimum_salary']).to eq('50000.0')
       expect(body['data']['maximum_salary']).to eq('90000.0')
       expect(body['data']['average_salary']).to eq(70000.0)
