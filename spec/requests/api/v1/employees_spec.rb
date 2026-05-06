@@ -127,4 +127,35 @@ RSpec.describe "Api::V1::Employees", type: :request do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe "PUT /api/v1/employees/:id" do
+    let(:employee) { create(:employee) }
+    let(:valid_attributes) do
+      {
+        full_name: "Jane Doe",
+        job_title: "Senior Software Engineer",
+        country: "USA",
+        salary: 150000,
+        email: "jane.doe@example.com"
+      }
+    end
+
+    it "updates the employee" do
+      put "/api/v1/employees/#{employee.id}", params: { employee: valid_attributes }
+
+      expect(response).to have_http_status(:ok)
+      employee.reload
+      expect(employee.full_name).to eq(valid_attributes[:full_name])
+      expect(employee.job_title).to eq(valid_attributes[:job_title])
+      expect(employee.country).to eq(valid_attributes[:country])
+      expect(employee.salary).to eq(valid_attributes[:salary])
+      expect(employee.email).to eq(valid_attributes[:email])
+    end
+
+    it "returns not found for non-existent employee" do
+      put "/api/v1/employees/999999", params: { employee: valid_attributes }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end
