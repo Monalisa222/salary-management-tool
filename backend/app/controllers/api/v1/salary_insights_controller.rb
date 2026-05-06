@@ -28,7 +28,7 @@ class Api::V1::SalaryInsightsController < ApplicationController
   end
 
   def distribution
-    employees = Employee.where(country: params[:country])
+    employees = Employee.where(country: normalize_country)
 
     if employees.exists?
       distribution = SalaryInsights::DistributionService.new(country: normalize_country).call

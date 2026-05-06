@@ -5,10 +5,11 @@ module SalaryInsights
     end
 
     def call
-      employees = Employee.where(country: @country)
+      employees = Employee.all
+      employees = Employee.where(country: @country) if @country.present?
 
       {
-        country: @country,
+        country: @country || "All Countries",
         minimum_salary: employees.minimum(:salary),
         maximum_salary: employees.maximum(:salary),
         average_salary: employees.average(:salary)&.to_f,

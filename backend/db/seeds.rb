@@ -34,15 +34,17 @@ now = Time.current
 
 TOTAL_RECORDS.times.each_slice(BATCH_SIZE) do |batch|
   employees = batch.map do |index|
-    first_name = first_names.sample
-    last_name = last_names.sample
+  first_name = first_names.sample
+  last_name = last_names.sample
+  job_title = job_titles.sample
+  country = countries.sample
 
     {
       full_name: "#{first_name} #{last_name}",
-      job_title: job_titles.sample,
-      country: countries.sample,
+      job_title: job_title.to_s.strip.titleize,
+      country: country.to_s.strip.upcase,
       salary: rand(30_000..200_000),
-      email: "employee#{index + 1}@example.com",
+      email: "employee#{index + 1}@example.com".downcase,
       department: departments.sample,
       joining_date: rand(5.years).seconds.ago.to_date,
       active: true,
