@@ -11,4 +11,12 @@ RSpec.describe Employee, type: :model do
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
   end
+
+  describe "callbacks" do
+    it "normalizes email before saving" do
+      employee = build(:employee, email: "John.Doe@example.com")
+      employee.save
+      expect(employee.email).to eq("john.doe@example.com")
+    end
+  end
 end

@@ -4,4 +4,12 @@ class Employee < ApplicationRecord
   validates :country, presence: true
   validates :salary, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :email, presence: true, uniqueness: { case_sensitive: false }
+
+  before_save :normalize_email
+
+  private
+
+  def normalize_email
+    self.email = email.downcase.strip
+  end
 end
