@@ -18,3 +18,11 @@ export async function createEmployee(employee) {
 
   return response.data
 }
+
+export async function updateEmployee(id, employee) {
+  const response = await apiClient.patch(`/employees/${id}`, {
+    employee,
+  })
+
+  return response.data
+}
