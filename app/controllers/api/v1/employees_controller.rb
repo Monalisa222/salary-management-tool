@@ -1,4 +1,6 @@
 class Api::V1::EmployeesController < ApplicationController
+  before_action :set_employee, only: [:show, :update, :destroy]
+
   def index
     employees = EmployeeSearchQuery.new(scope: Employee.order(created_at: :desc), params: params).call.page(page).per(per_page)
 
@@ -15,23 +17,30 @@ class Api::V1::EmployeesController < ApplicationController
   end
 
   def show
-    employee = Employee.find(params[:id])
-    render json: { data: employee }
+    render json: { data: @employee }
   end
 
   def update
-    employee = Employee.find(params[:id])
-    if employee.update(employee_params)
-      render json: { data: employee }
+    if @employee.update(employee_params)
+      render json: { data: @employee }
     else
-      render json: { errors: employee.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @employee.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @employee.destroy
+    head :no_content
   end
 
   private
 
   def employee_params
     params.require(:employee).permit(:full_name, :job_title, :country, :salary, :email, :department, :joining_date, :active)
+  end
+
+  def set_employee
+    @employee = Employee.find(params[:id])
   end
 
   def page
