@@ -3,17 +3,10 @@ class Api::V1::SalaryInsightsController < ApplicationController
     employees = Employee.where(country: params[:country])
 
     if employees.exists?
-      render json: {
-        data: {
-          country: params[:country],
-          minimum_salary: employees.minimum(:salary),
-          maximum_salary: employees.maximum(:salary),
-          average_salary: employees.average(:salary)&.to_f,
-          employee_count: employees.count
-        }
-      }
+      stats = SalaryInsights::CountryStatsService.new(params[:country]).call
+      render json: { data: stats }
     else
-      render json: { errors: ["No employees found for country #{params[:country]}"] }, status: :not_found
+      render json: { error: "No employees found for country #{params[:country]}" }, status: :not_found
     end
   end
 end
