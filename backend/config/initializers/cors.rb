@@ -8,7 +8,7 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins "http://localhost:5173",
-            "https://salary-management-tool-iqaengydo-monalisa-s-projects1.vercel.app"
+            /https:\/\/salary-management-tool-.*\.vercel\.app/
 
     resource "*",
              headers: :any,
