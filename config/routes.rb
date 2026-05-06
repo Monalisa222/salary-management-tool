@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :employees
+
+      get 'salary_insights/country',
+        to: 'salary_insights#country'
     end
   end
 end
