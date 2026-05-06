@@ -10,3 +10,11 @@ export async function fetchEmployees(page = 1, perPage = 10) {
 
   return response.data
 }
+
+export async function createEmployee(employee) {
+  const response = await apiClient.post('/employees', {
+    employee,
+  })
+
+  return response.data
+}
