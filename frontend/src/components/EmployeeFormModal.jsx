@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { X, Loader2 } from 'lucide-react'
-import { createEmployee } from '../api/employees'
+import { useEffect, useState } from 'react'
+import { createEmployee, updateEmployee } from '../api/employees'
 
 const initialForm = {
   full_name: '',
@@ -12,10 +12,15 @@ const initialForm = {
   joining_date: '',
 }
 
-function EmployeeFormModal({ open, onClose, onCreated }) {
-  const [form, setForm] = useState(initialForm)
+function EmployeeFormModal({ open, employee, onClose, onSaved }) {
+  const [form, setForm] = useState(employee || initialForm)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState([])
+  const isEditMode = Boolean(employee)
+
+  useEffect(() => {
+    setForm(employee || initialForm)
+  }, [employee, open])
 
   if (!open) return null
 
@@ -35,10 +40,14 @@ function EmployeeFormModal({ open, onClose, onCreated }) {
       setSaving(true)
       setErrors([])
 
-      await createEmployee(form)
+      if (isEditMode) {
+        await updateEmployee(employee.id, form)
+      } else {
+        await createEmployee(form)
+      }
 
       setForm(initialForm)
-      onCreated()
+      onSaved()
       onClose()
     } catch (error) {
       setErrors(
@@ -55,10 +64,12 @@ function EmployeeFormModal({ open, onClose, onCreated }) {
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
           <div>
             <h2 className="text-xl font-bold text-slate-950">
-              Add Employee
+              {isEditMode ? 'Edit Employee' : 'Add Employee'}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              Create a new employee salary record.
+              {isEditMode
+                  ? 'Update employee salary record.'
+                  : 'Create a new employee salary record.'}
             </p>
           </div>
 
@@ -154,7 +165,7 @@ function EmployeeFormModal({ open, onClose, onCreated }) {
               className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
             >
               {saving && <Loader2 className="animate-spin" size={16} />}
-              Save Employee
+              {isEditMode ? 'Update Employee' : 'Save Employee'}
             </button>
           </div>
         </form>

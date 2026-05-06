@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Mail, BriefcaseBusiness, MapPin, Loader2 } from 'lucide-react'
 import { fetchEmployees } from '../api/employees'
 import EmployeeFormModal from '../components/EmployeeFormModal'
+import { Pencil } from 'lucide-react'
 
 function Employees() {
   const [employees, setEmployees] = useState([])
@@ -11,6 +12,7 @@ function Employees() {
   const [error, setError] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [selectedEmployee, setSelectedEmployee] = useState(null)
 
   useEffect(() => {
     async function loadEmployees() {
@@ -45,7 +47,10 @@ function Employees() {
         </div>
 
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            setSelectedEmployee(null)
+            setModalOpen(true)
+          }}
           className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
         >
           Add Employee
@@ -77,6 +82,7 @@ function Employees() {
                     <th className="px-6 py-4">Country</th>
                     <th className="px-6 py-4">Department</th>
                     <th className="px-6 py-4 text-right">Salary</th>
+                    <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
 
@@ -114,6 +120,19 @@ function Employees() {
                       <td className="px-6 py-4 text-right font-semibold text-slate-950">
                         ₹{Number(employee.salary).toLocaleString('en-IN')}
                       </td>
+
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={() => {
+                            setSelectedEmployee(employee)
+                            setModalOpen(true)
+                          }}
+                          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          <Pencil size={14} />
+                          Edit
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -148,10 +167,14 @@ function Employees() {
       </div>
 
       <EmployeeFormModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onCreated={() => setRefreshKey((current) => current + 1)}
-        />
+        open={modalOpen}
+        employee={selectedEmployee}
+        onClose={() => {
+          setModalOpen(false)
+          setSelectedEmployee(null)
+        }}
+        onSaved={() => setRefreshKey((current) => current + 1)}
+      />
     </div>
   )
 }
